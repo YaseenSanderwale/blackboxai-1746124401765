@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>jhanko.com - Post Your Ad</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col items-center p-6">
+  <header class="mb-8">
+    <h1 class="text-4xl font-bold text-gray-800">jhanko.com</h1>
+    <p class="text-gray-600 mt-2">Post your ad with image, video, or text</p>
+  </header>
+
+  <main class="w-full max-w-lg bg-white p-6 rounded-lg shadow-md">
+    <form id="adForm" class="space-y-6" enctype="multipart/form-data" method="POST" action="/ads">
+      <div>
+        <label for="text" class="block text-gray-700 font-semibold mb-2">Ad Text (optional)</label>
+        <textarea id="text" name="text" rows="4" class="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Write your ad text here..."></textarea>
+      </div>
+      <div>
+        <label for="media" class="block text-gray-700 font-semibold mb-2">Upload Image or Video (optional)</label>
+        <input type="file" id="media" name="media" accept="image/*,video/*" class="block w-full text-gray-700" />
+      </div>
+      <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-3 rounded-md hover:bg-blue-700 transition-colors">
+        Submit Ad
+      </button>
+    </form>
+    <p id="message" class="mt-4 text-center text-green-600 font-semibold"></p>
+  </main>
+
+  <script>
+    const form = document.getElementById('adForm');
+    const message = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      message.textContent = '';
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch('/ads', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+        if (response.ok) {
+          message.textContent = 'Ad submitted successfully!';
+          form.reset();
+        } else {
+          message.textContent = data.error || 'Failed to submit ad.';
+        }
+      } catch (error) {
+        message.textContent = 'Error submitting ad.';
+      }
+    });
+  </script>
+</body>
+</html>
